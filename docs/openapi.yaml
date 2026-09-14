@@ -1,0 +1,2973 @@
+openapi: 3.0.3
+info:
+  title: Booker API
+  version: "1.0.0"
+  description: >-
+    API REST del sistema de gestión de biblioteca Booker. Stack: Node.js +
+    Express 5 + Sequelize 6 sobre MySQL. No hay autenticación implementada:
+    todos los endpoints son de acceso libre (ver sección security más abajo).
+servers:
+  - url: http://localhost:3000
+    description: Servidor local (puerto fijo definido en index.js)
+security: []
+tags:
+  - name: Autores
+  - name: Categorias
+  - name: Editoriales
+  - name: Ejemplares
+  - name: EstadosEjemplar
+  - name: EstadosMulta
+  - name: EstadosPrestamo
+  - name: EstadosReserva
+  - name: EstadosUsuario
+  - name: Idiomas
+  - name: Libros
+  - name: Multas
+  - name: Notificaciones
+  - name: Paises
+  - name: Prestamos
+  - name: Reservas
+  - name: Roles
+  - name: TiposDocumento
+  - name: TiposNotificacion
+  - name: Usuarios
+
+paths:
+  # ===================== AUTORES =====================
+  /api/autores/:
+    get:
+      tags: [Autores]
+      operationId: listarAutores
+      summary: Lista todos los autores
+      responses:
+        "200":
+          description: Lista de autores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Autor"
+        "500":
+          description: Error al obtener los autores
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [Autores]
+      operationId: crearAutor
+      summary: Crea un autor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Autor"
+            example:
+              nombre: Gabriel
+              apellido: García Márquez
+              nacionalidad: Colombiana
+              fecha_nacimiento: "1927-03-06"
+              biografia: Escritor colombiano, premio Nobel de Literatura 1982.
+      responses:
+        "201":
+          description: Autor creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Autor"
+        "400":
+          description: Faltan campos obligatorios o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/autores/{id}:
+    patch:
+      tags: [Autores]
+      operationId: editarAutor
+      summary: Edita un autor
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Autor"
+      responses:
+        "200":
+          description: Autor actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar el autor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Autor no encontrado o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [Autores]
+      operationId: eliminarAutor
+      summary: Elimina un autor
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Autor eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Autor no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar el autor
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== CATEGORIAS =====================
+  /api/categorias/:
+    get:
+      tags: [Categorias]
+      operationId: listarCategorias
+      summary: Lista todas las categorías
+      responses:
+        "200":
+          description: Lista de categorías
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Categoria"
+        "500":
+          description: Error al obtener las categorías
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [Categorias]
+      operationId: crearCategoria
+      summary: Crea una categoría
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Categoria"
+            example:
+              nombre: Ciencia ficción
+              descripcion: Libros de ciencia ficción y especulativa
+      responses:
+        "201":
+          description: Categoría creada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Categoria"
+        "400":
+          description: Falta el nombre o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/categorias/{id}:
+    patch:
+      tags: [Categorias]
+      operationId: editarCategoria
+      summary: Edita una categoría
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Categoria"
+      responses:
+        "200":
+          description: Categoría actualizada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar la categoría
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Categoría no encontrada o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [Categorias]
+      operationId: eliminarCategoria
+      summary: Elimina una categoría
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Categoría eliminada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Categoría no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar la categoría
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== EDITORIALES =====================
+  /api/editoriales/:
+    get:
+      tags: [Editoriales]
+      operationId: listarEditoriales
+      summary: Lista todas las editoriales
+      responses:
+        "200":
+          description: Lista de editoriales
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Editorial"
+        "500":
+          description: Error al obtener las editoriales
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [Editoriales]
+      operationId: crearEditorial
+      summary: Crea una editorial
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Editorial"
+            example:
+              nombre_editorial: Editorial Sudamericana
+              telefono: "+54 11 4123-4567"
+              email: contacto@sudamericana.com
+              pagina_web: https://www.sudamericana.com
+              id_pais: 1
+      responses:
+        "201":
+          description: Editorial creada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Editorial"
+        "400":
+          description: Faltan campos obligatorios o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/editoriales/{id}:
+    patch:
+      tags: [Editoriales]
+      operationId: editarEditorial
+      summary: Edita una editorial
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Editorial"
+      responses:
+        "200":
+          description: Editorial actualizada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar la editorial
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Editorial no encontrada o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [Editoriales]
+      operationId: eliminarEditorial
+      summary: Elimina una editorial
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Editorial eliminada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Editorial no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar la editorial
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== EJEMPLARES =====================
+  /api/ejemplares/:
+    get:
+      tags: [Ejemplares]
+      operationId: listarEjemplares
+      summary: Lista todos los ejemplares
+      responses:
+        "200":
+          description: Lista de ejemplares
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ejemplar"
+        "500":
+          description: Error al obtener los ejemplares
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [Ejemplares]
+      operationId: crearEjemplar
+      summary: Crea un ejemplar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Ejemplar"
+            example:
+              codigo_inventario: INV-00123
+              ubicacion_estante: Estante B-4
+              fecha_adquisicion: "2024-02-15"
+              codigo_barras: "7791234567890"
+              id_libro: 1
+              id_estado_ejemplar: 1
+      responses:
+        "201":
+          description: Ejemplar creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ejemplar"
+        "400":
+          description: Faltan campos obligatorios o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/ejemplares/{id}:
+    patch:
+      tags: [Ejemplares]
+      operationId: editarEjemplar
+      summary: Edita un ejemplar
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Ejemplar"
+      responses:
+        "200":
+          description: Ejemplar actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar el ejemplar
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Ejemplar no encontrado o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [Ejemplares]
+      operationId: eliminarEjemplar
+      summary: Elimina un ejemplar
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Ejemplar eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Ejemplar no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar el ejemplar
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== ESTADOS EJEMPLAR =====================
+  /api/estados_ejemplar/:
+    get:
+      tags: [EstadosEjemplar]
+      operationId: listarEstadosEjemplar
+      summary: Lista todos los estados de ejemplar
+      responses:
+        "200":
+          description: Lista de estados de ejemplar
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EstadoEjemplar"
+        "500":
+          description: Error al obtener los estados de ejemplar
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [EstadosEjemplar]
+      operationId: crearEstadoEjemplar
+      summary: Crea un estado de ejemplar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstadoEjemplar"
+            example:
+              nombre_estado: Disponible
+      responses:
+        "201":
+          description: Estado de ejemplar creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EstadoEjemplar"
+        "400":
+          description: Falta el nombre del estado o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/estados_ejemplar/{id}:
+    patch:
+      tags: [EstadosEjemplar]
+      operationId: editarEstadoEjemplar
+      summary: Edita un estado de ejemplar
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstadoEjemplar"
+      responses:
+        "200":
+          description: Estado del ejemplar actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar el estado del ejemplar
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Estado del ejemplar no encontrado o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [EstadosEjemplar]
+      operationId: eliminarEstadoEjemplar
+      summary: Elimina un estado de ejemplar
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Estado del ejemplar eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Estado del ejemplar no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar el estado del ejemplar
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== ESTADOS MULTA =====================
+  /api/estados_multa/:
+    get:
+      tags: [EstadosMulta]
+      operationId: listarEstadosMulta
+      summary: Lista todos los estados de multa
+      responses:
+        "200":
+          description: Lista de estados de multa
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EstadoMulta"
+        "500":
+          description: Error al obtener los estados de multa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [EstadosMulta]
+      operationId: crearEstadoMulta
+      summary: Crea un estado de multa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstadoMulta"
+            example:
+              nombre_estado: Pendiente
+      responses:
+        "201":
+          description: Estado de multa creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EstadoMulta"
+        "400":
+          description: Falta el nombre del estado o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/estados_multa/{id}:
+    patch:
+      tags: [EstadosMulta]
+      operationId: editarEstadoMulta
+      summary: Edita un estado de multa
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstadoMulta"
+      responses:
+        "200":
+          description: Estado de la multa actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar el estado de la multa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Estado de la multa no encontrado o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [EstadosMulta]
+      operationId: eliminarEstadoMulta
+      summary: Elimina un estado de multa
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Estado de la multa eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Estado de la multa no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar el estado de la multa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== ESTADOS PRESTAMO =====================
+  /api/estados_prestamo/:
+    get:
+      tags: [EstadosPrestamo]
+      operationId: listarEstadosPrestamo
+      summary: Lista todos los estados de préstamo
+      responses:
+        "200":
+          description: Lista de estados de préstamo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EstadoPrestamo"
+        "500":
+          description: Error al obtener los estados de préstamo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [EstadosPrestamo]
+      operationId: crearEstadoPrestamo
+      summary: Crea un estado de préstamo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstadoPrestamo"
+            example:
+              nombre_estado: Activo
+      responses:
+        "201":
+          description: Estado de préstamo creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EstadoPrestamo"
+        "400":
+          description: Falta el nombre del estado o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/estados_prestamo/{id}:
+    patch:
+      tags: [EstadosPrestamo]
+      operationId: editarEstadoPrestamo
+      summary: Edita un estado de préstamo
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstadoPrestamo"
+      responses:
+        "200":
+          description: Estado del préstamo actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar el estado del préstamo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Estado del préstamo no encontrado o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [EstadosPrestamo]
+      operationId: eliminarEstadoPrestamo
+      summary: Elimina un estado de préstamo
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Estado del préstamo eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Estado del préstamo no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar el estado del préstamo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== ESTADOS RESERVA =====================
+  /api/estados_reserva/:
+    get:
+      tags: [EstadosReserva]
+      operationId: listarEstadosReserva
+      summary: Lista todos los estados de reserva
+      responses:
+        "200":
+          description: Lista de estados de reserva
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EstadoReserva"
+        "500":
+          description: Error al obtener los estados de reserva
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [EstadosReserva]
+      operationId: crearEstadoReserva
+      summary: Crea un estado de reserva
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstadoReserva"
+            example:
+              nombre_estado: Activa
+      responses:
+        "201":
+          description: Estado de reserva creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EstadoReserva"
+        "400":
+          description: Falta el nombre del estado o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/estados_reserva/{id}:
+    patch:
+      tags: [EstadosReserva]
+      operationId: editarEstadoReserva
+      summary: Edita un estado de reserva
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstadoReserva"
+      responses:
+        "200":
+          description: Estado de la reserva actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar el estado de la reserva
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Estado de la reserva no encontrado o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [EstadosReserva]
+      operationId: eliminarEstadoReserva
+      summary: Elimina un estado de reserva
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Estado de la reserva eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Estado de la reserva no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar el estado de la reserva
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== ESTADOS USUARIO =====================
+  /api/estados_usuario/:
+    get:
+      tags: [EstadosUsuario]
+      operationId: listarEstadosUsuario
+      summary: Lista todos los estados de usuario
+      responses:
+        "200":
+          description: Lista de estados de usuario
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EstadoUsuario"
+        "500":
+          description: Error al obtener los estados de usuario
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [EstadosUsuario]
+      operationId: crearEstadoUsuario
+      summary: Crea un estado de usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstadoUsuario"
+            example:
+              nombre_estado_usuario: Activo
+      responses:
+        "201":
+          description: Estado de usuario creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EstadoUsuario"
+        "400":
+          description: Falta el nombre del estado o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/estados_usuario/{id}:
+    patch:
+      tags: [EstadosUsuario]
+      operationId: editarEstadoUsuario
+      summary: Edita un estado de usuario
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EstadoUsuario"
+      responses:
+        "200":
+          description: Estado del usuario actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar el estado del usuario
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Estado del usuario no encontrado o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [EstadosUsuario]
+      operationId: eliminarEstadoUsuario
+      summary: Elimina un estado de usuario
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Estado del usuario eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Estado del usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar el estado del usuario
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== IDIOMAS =====================
+  /api/idiomas/:
+    get:
+      tags: [Idiomas]
+      operationId: listarIdiomas
+      summary: Lista todos los idiomas
+      responses:
+        "200":
+          description: Lista de idiomas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Idioma"
+        "500":
+          description: Error al obtener los idiomas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [Idiomas]
+      operationId: crearIdioma
+      summary: Crea un idioma
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Idioma"
+            example:
+              nombre: Español
+      responses:
+        "201":
+          description: Idioma creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Idioma"
+        "400":
+          description: Falta el nombre o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/idiomas/{id}:
+    patch:
+      tags: [Idiomas]
+      operationId: editarIdioma
+      summary: Edita un idioma
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Idioma"
+      responses:
+        "200":
+          description: Idioma actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar el idioma
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Idioma no encontrado o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [Idiomas]
+      operationId: eliminarIdioma
+      summary: Elimina un idioma
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Idioma eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Idioma no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar el idioma
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== LIBROS =====================
+  /api/libros/:
+    get:
+      tags: [Libros]
+      operationId: listarLibros
+      summary: Lista todos los libros
+      responses:
+        "200":
+          description: Lista de libros
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Libro"
+        "500":
+          description: Error al obtener los libros
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [Libros]
+      operationId: crearLibro
+      summary: Crea un libro
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Libro"
+            example:
+              titulo: Cien años de soledad
+              isbn: "978-0307474728"
+              anio_publicacion: 1967
+              num_paginas: 471
+              sinopsis: La historia de la familia Buendía en Macondo.
+              id_editorial: 1
+              id_idioma: 1
+      responses:
+        "201":
+          description: Libro creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Libro"
+        "400":
+          description: Faltan campos obligatorios o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/libros/{id}:
+    patch:
+      tags: [Libros]
+      operationId: editarLibro
+      summary: Edita un libro
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Libro"
+      responses:
+        "200":
+          description: Libro actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar el libro
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Libro no encontrado o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [Libros]
+      operationId: eliminarLibro
+      summary: Elimina un libro
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Libro eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Libro no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar el libro
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/libros/{id}/autores:
+    post:
+      tags: [Libros]
+      operationId: agregarAutorALibro
+      summary: Asocia un autor existente al libro {id}
+      description: >-
+        Crea una fila en la tabla intermedia Libro_Autor
+        (src/services/servicesLibroAutor.js).
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id_autor]
+              properties:
+                id_autor:
+                  type: integer
+              example:
+                id_autor: 1
+      responses:
+        "201":
+          description: Relación libro-autor creada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LibroAutor"
+        "400":
+          description: Falta id_autor o error al asociar (p. ej. FK inexistente)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/libros/{id}/categorias:
+    post:
+      tags: [Libros]
+      operationId: agregarCategoriaALibro
+      summary: Asocia una categoría existente al libro {id}
+      description: >-
+        Crea una fila en la tabla intermedia Libro_Categoria
+        (src/services/servicesLibroCategoria.js).
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id_categoria]
+              properties:
+                id_categoria:
+                  type: integer
+              example:
+                id_categoria: 1
+      responses:
+        "201":
+          description: Relación libro-categoría creada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LibroCategoria"
+        "400":
+          description: Falta id_categoria o error al asociar (p. ej. FK inexistente)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== MULTAS =====================
+  /api/multas/:
+    get:
+      tags: [Multas]
+      operationId: listarMultas
+      summary: Lista todas las multas
+      responses:
+        "200":
+          description: Lista de multas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Multa"
+        "500":
+          description: Error al obtener las multas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [Multas]
+      operationId: crearMulta
+      summary: Crea una multa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Multa"
+            example:
+              id_prestamo: 1
+              id_estado_multa: 1
+              monto: 1500.00
+              motivo: Devolución fuera de plazo
+              fecha_generada: "2026-09-01"
+      responses:
+        "201":
+          description: Multa creada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Multa"
+        "400":
+          description: Faltan campos obligatorios o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/multas/{id}:
+    patch:
+      tags: [Multas]
+      operationId: editarMulta
+      summary: Edita una multa
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Multa"
+      responses:
+        "200":
+          description: Multa actualizada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar la multa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Multa no encontrada o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [Multas]
+      operationId: eliminarMulta
+      summary: Elimina una multa
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Multa eliminada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Multa no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar la multa
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/multas/{id}/pagar:
+    patch:
+      tags: [Multas]
+      operationId: pagarMulta
+      summary: Marca la multa {id} como pagada
+      description: >-
+        Sin body. Busca en Estados_Multa el registro con nombre_estado =
+        "Pagada", actualiza id_estado_multa y setea fecha_pago a la fecha
+        actual (src/services/servicesMulta.js).
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Multa pagada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: >-
+            No existe el estado "Pagada" en Estados_Multa, o error al pagar
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Multa no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== NOTIFICACIONES =====================
+  /api/notificaciones/:
+    get:
+      tags: [Notificaciones]
+      operationId: listarNotificaciones
+      summary: Lista todas las notificaciones
+      responses:
+        "200":
+          description: Lista de notificaciones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notificacion"
+        "500":
+          description: Error al obtener las notificaciones
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [Notificaciones]
+      operationId: crearNotificacion
+      summary: Crea una notificación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Notificacion"
+            example:
+              id_cliente: 1
+              id_tipo_notificacion: 1
+              mensaje: Tu préstamo vence en 2 días
+              fecha_envio: "2026-09-14T10:00:00.000Z"
+              referencia_id: 5
+              tipo_referencia: prestamo
+      responses:
+        "201":
+          description: Notificación creada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notificacion"
+        "400":
+          description: Faltan campos obligatorios o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/notificaciones/{id}:
+    patch:
+      tags: [Notificaciones]
+      operationId: editarNotificacion
+      summary: Edita una notificación
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Notificacion"
+      responses:
+        "200":
+          description: Notificación actualizada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar la notificación
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Notificación no encontrada o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [Notificaciones]
+      operationId: eliminarNotificacion
+      summary: Elimina una notificación
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Notificación eliminada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Notificación no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar la notificación
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/notificaciones/{id}/marcar-leida:
+    patch:
+      tags: [Notificaciones]
+      operationId: marcarNotificacionLeida
+      summary: Marca la notificación {id} como leída
+      description: "Sin body. Setea leida: true (src/services/servicesNotificacion.js)."
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Notificación marcada como leída
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al marcar la notificación como leída
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Notificación no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== PAISES =====================
+  /api/paises/:
+    get:
+      tags: [Paises]
+      operationId: listarPaises
+      summary: Lista todos los países
+      responses:
+        "200":
+          description: Lista de países
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Pais"
+        "500":
+          description: Error al obtener los países
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [Paises]
+      operationId: crearPais
+      summary: Crea un país
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Pais"
+            example:
+              nombre_pais: Argentina
+      responses:
+        "201":
+          description: País creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pais"
+        "400":
+          description: Falta el nombre del país o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/paises/{id}:
+    patch:
+      tags: [Paises]
+      operationId: editarPais
+      summary: Edita un país
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Pais"
+      responses:
+        "200":
+          description: País actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar el país
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: País no encontrado o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [Paises]
+      operationId: eliminarPais
+      summary: Elimina un país
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: País eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: País no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar el país
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== PRESTAMOS =====================
+  /api/prestamos/:
+    get:
+      tags: [Prestamos]
+      operationId: listarPrestamos
+      summary: Lista todos los préstamos
+      responses:
+        "200":
+          description: Lista de préstamos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Prestamo"
+        "500":
+          description: Error al obtener los préstamos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [Prestamos]
+      operationId: crearPrestamo
+      summary: Crea un préstamo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Prestamo"
+            example:
+              id_ejemplar: 1
+              id_cliente: 2
+              id_registrado_por: 1
+              id_estado_prestamo: 1
+              fecha_prestamo: "2026-09-01"
+              fecha_devolucion_esperada: "2026-09-15"
+              observaciones: Retirado en mostrador
+      responses:
+        "201":
+          description: Préstamo creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Prestamo"
+        "400":
+          description: Faltan campos obligatorios o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/prestamos/{id}:
+    patch:
+      tags: [Prestamos]
+      operationId: editarPrestamo
+      summary: Edita un préstamo
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Prestamo"
+      responses:
+        "200":
+          description: Préstamo actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar el préstamo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Préstamo no encontrado o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [Prestamos]
+      operationId: eliminarPrestamo
+      summary: Elimina un préstamo
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Préstamo eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Préstamo no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar el préstamo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/prestamos/{id}/devolver:
+    patch:
+      tags: [Prestamos]
+      operationId: devolverPrestamo
+      summary: Marca el préstamo {id} como devuelto
+      description: >-
+        Sin body. Busca en Estados_Prestamo el registro con nombre_estado =
+        "Devuelto", actualiza id_estado_prestamo y setea
+        fecha_devolucion_real a la fecha actual
+        (src/services/servicesPrestamo.js).
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Préstamo devuelto correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: >-
+            No existe el estado "Devuelto" en Estados_Prestamo, o error al
+            devolver
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Préstamo no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== RESERVAS =====================
+  /api/reservas/:
+    get:
+      tags: [Reservas]
+      operationId: listarReservas
+      summary: Lista todas las reservas
+      responses:
+        "200":
+          description: Lista de reservas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reserva"
+        "500":
+          description: Error al obtener las reservas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [Reservas]
+      operationId: crearReserva
+      summary: Crea una reserva
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Reserva"
+            example:
+              id_libro: 1
+              id_cliente: 2
+              id_estado_reserva: 1
+              fecha_reserva: "2026-09-14"
+              fecha_expiracion: "2026-09-21"
+      responses:
+        "201":
+          description: Reserva creada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reserva"
+        "400":
+          description: Faltan campos obligatorios o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/reservas/{id}:
+    patch:
+      tags: [Reservas]
+      operationId: editarReserva
+      summary: Edita una reserva
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Reserva"
+      responses:
+        "200":
+          description: Reserva actualizada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar la reserva
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Reserva no encontrada o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [Reservas]
+      operationId: eliminarReserva
+      summary: Elimina una reserva
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Reserva eliminada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Reserva no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar la reserva
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/reservas/{id}/cancelar:
+    patch:
+      tags: [Reservas]
+      operationId: cancelarReserva
+      summary: Cancela la reserva {id}
+      description: >-
+        Sin body. Busca en Estados_Reserva el registro con nombre_estado =
+        "Cancelada" y actualiza id_estado_reserva
+        (src/services/servicesReserva.js).
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Reserva cancelada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: >-
+            No existe el estado "Cancelada" en Estados_Reserva, o error al
+            cancelar
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Reserva no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== ROLES =====================
+  /api/roles/:
+    get:
+      tags: [Roles]
+      operationId: listarRoles
+      summary: Lista todos los roles
+      responses:
+        "200":
+          description: Lista de roles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Rol"
+        "500":
+          description: Error al obtener los roles
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [Roles]
+      operationId: crearRol
+      summary: Crea un rol
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Rol"
+            example:
+              nombre_rol: Bibliotecario
+              descripcion_rol: Gestiona préstamos, reservas y el catálogo
+      responses:
+        "201":
+          description: Rol creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Rol"
+        "400":
+          description: Faltan campos obligatorios o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/roles/{id}:
+    patch:
+      tags: [Roles]
+      operationId: editarRol
+      summary: Edita un rol
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Rol"
+      responses:
+        "200":
+          description: Rol actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar el rol
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Rol no encontrado o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [Roles]
+      operationId: eliminarRol
+      summary: Elimina un rol
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Rol eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Rol no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar el rol
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== TIPOS DOCUMENTO =====================
+  /api/tipos_documento/:
+    get:
+      tags: [TiposDocumento]
+      operationId: listarTiposDocumento
+      summary: Lista todos los tipos de documento
+      responses:
+        "200":
+          description: Lista de tipos de documento
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TipoDocumento"
+        "500":
+          description: Error al obtener los tipos de documento
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [TiposDocumento]
+      operationId: crearTipoDocumento
+      summary: Crea un tipo de documento
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TipoDocumento"
+            example:
+              codigo: DNI
+              nombre: Documento Nacional de Identidad
+      responses:
+        "201":
+          description: Tipo de documento creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TipoDocumento"
+        "400":
+          description: Faltan campos obligatorios o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/tipos_documento/{id}:
+    patch:
+      tags: [TiposDocumento]
+      operationId: editarTipoDocumento
+      summary: Edita un tipo de documento
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TipoDocumento"
+      responses:
+        "200":
+          description: Tipo de documento actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar el tipo de documento
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Tipo de documento no encontrado o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [TiposDocumento]
+      operationId: eliminarTipoDocumento
+      summary: Elimina un tipo de documento
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Tipo de documento eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Tipo de documento no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar el tipo de documento
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== TIPOS NOTIFICACION =====================
+  /api/tipos_notificacion/:
+    get:
+      tags: [TiposNotificacion]
+      operationId: listarTiposNotificacion
+      summary: Lista todos los tipos de notificación
+      responses:
+        "200":
+          description: Lista de tipos de notificación
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TipoNotificacion"
+        "500":
+          description: Error al obtener los tipos de notificación
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [TiposNotificacion]
+      operationId: crearTipoNotificacion
+      summary: Crea un tipo de notificación
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TipoNotificacion"
+            example:
+              nombre: Recordatorio de vencimiento
+      responses:
+        "201":
+          description: Tipo de notificación creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TipoNotificacion"
+        "400":
+          description: Falta el nombre o error al crear
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/tipos_notificacion/{id}:
+    patch:
+      tags: [TiposNotificacion]
+      operationId: editarTipoNotificacion
+      summary: Edita un tipo de notificación
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TipoNotificacion"
+      responses:
+        "200":
+          description: Tipo de notificación actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar el tipo de notificación
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Tipo de notificación no encontrado o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [TiposNotificacion]
+      operationId: eliminarTipoNotificacion
+      summary: Elimina un tipo de notificación
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Tipo de notificación eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Tipo de notificación no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar el tipo de notificación
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ===================== USUARIOS =====================
+  /api/usuarios/:
+    get:
+      tags: [Usuarios]
+      operationId: listarUsuarios
+      summary: Lista todos los usuarios
+      responses:
+        "200":
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Usuario"
+        "500":
+          description: Error al obtener los usuarios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags: [Usuarios]
+      operationId: crearUsuario
+      summary: Crea un usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Usuario"
+            example:
+              numero_documento: "40123456"
+              nombre: Ana
+              segundo_nombre: María
+              primer_apellido: Gómez
+              segundo_apellido: Pérez
+              telefono: "+54 9 11 5555-1234"
+              email: ana.gomez@example.com
+              direccion: Av. Siempre Viva 742
+              fecha_registro: "2026-09-14T00:00:00.000Z"
+              id_rol: 1
+              id_tipo_documento: 1
+              id_estado_cliente: 1
+      responses:
+        "201":
+          description: Usuario creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Usuario"
+        "400":
+          description: >-
+            Faltan campos obligatorios o error al crear (p. ej.
+            numero_documento duplicado)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/usuarios/{id}:
+    patch:
+      tags: [Usuarios]
+      operationId: editarUsuario
+      summary: Edita un usuario
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Usuario"
+      responses:
+        "200":
+          description: Usuario actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Error al actualizar el usuario
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Usuario no encontrado o sin cambios
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [Usuarios]
+      operationId: eliminarUsuario
+      summary: Elimina un usuario
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: Usuario eliminado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "404":
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Error al eliminar el usuario
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      description: ID (PK) del recurso
+      schema:
+        type: integer
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        mensaje:
+          type: string
+        error:
+          type: string
+      example:
+        mensaje: Error al obtener los autores
+        error: detalle técnico del error de Sequelize/MySQL
+    MessageResponse:
+      type: object
+      properties:
+        mensaje:
+          type: string
+      example:
+        mensaje: Autor actualizado correctamente
+
+    Autor:
+      type: object
+      required: [nombre, apellido, nacionalidad, fecha_nacimiento]
+      properties:
+        id_autor:
+          type: integer
+          readOnly: true
+        nombre:
+          type: string
+          maxLength: 50
+        apellido:
+          type: string
+          maxLength: 30
+        nacionalidad:
+          type: string
+          maxLength: 30
+        fecha_nacimiento:
+          type: string
+          format: date
+        biografia:
+          type: string
+          maxLength: 300
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    Categoria:
+      type: object
+      required: [nombre]
+      properties:
+        id_categoria:
+          type: integer
+          readOnly: true
+        nombre:
+          type: string
+          maxLength: 100
+        descripcion:
+          type: string
+          maxLength: 100
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    Editorial:
+      type: object
+      required: [nombre_editorial, email]
+      properties:
+        id_editorial:
+          type: integer
+          readOnly: true
+        nombre_editorial:
+          type: string
+          maxLength: 100
+        telefono:
+          type: string
+          maxLength: 20
+          nullable: true
+        email:
+          type: string
+          maxLength: 30
+        pagina_web:
+          type: string
+          maxLength: 200
+          nullable: true
+        id_pais:
+          type: integer
+          nullable: true
+          description: FK a Pais (agregada por asociación en relaciones.js)
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    Ejemplar:
+      type: object
+      required: [codigo_inventario, ubicacion_estante, fecha_adquisicion, codigo_barras]
+      properties:
+        id_ejemplar:
+          type: integer
+          readOnly: true
+        codigo_inventario:
+          type: string
+          maxLength: 20
+        ubicacion_estante:
+          type: string
+          maxLength: 30
+        fecha_adquisicion:
+          type: string
+          format: date
+        codigo_barras:
+          type: string
+          maxLength: 50
+        id_libro:
+          type: integer
+          nullable: true
+          description: FK a Libro (agregada por asociación en relaciones.js)
+        id_estado_ejemplar:
+          type: integer
+          nullable: true
+          description: FK a EstadoEjemplar (agregada por asociación en relaciones.js)
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    EstadoEjemplar:
+      type: object
+      required: [nombre_estado]
+      properties:
+        id_estado_ejemplar:
+          type: integer
+          readOnly: true
+        nombre_estado:
+          type: string
+          maxLength: 30
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    EstadoMulta:
+      type: object
+      required: [nombre_estado]
+      properties:
+        id_estado_multa:
+          type: integer
+          readOnly: true
+        nombre_estado:
+          type: string
+          maxLength: 30
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    EstadoPrestamo:
+      type: object
+      required: [nombre_estado]
+      properties:
+        id_estado_prestamo:
+          type: integer
+          readOnly: true
+        nombre_estado:
+          type: string
+          maxLength: 30
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    EstadoReserva:
+      type: object
+      required: [nombre_estado]
+      properties:
+        id_estado_reserva:
+          type: integer
+          readOnly: true
+        nombre_estado:
+          type: string
+          maxLength: 30
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    EstadoUsuario:
+      type: object
+      required: [nombre_estado_usuario]
+      properties:
+        id_estado_usuario:
+          type: integer
+          readOnly: true
+        nombre_estado_usuario:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    Idioma:
+      type: object
+      required: [nombre]
+      properties:
+        id_idioma:
+          type: integer
+          readOnly: true
+        nombre:
+          type: string
+          maxLength: 30
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    Libro:
+      type: object
+      required: [titulo, isbn, anio_publicacion, num_paginas]
+      properties:
+        id_libro:
+          type: integer
+          readOnly: true
+        titulo:
+          type: string
+          maxLength: 150
+        isbn:
+          type: string
+          maxLength: 17
+        anio_publicacion:
+          type: integer
+        num_paginas:
+          type: integer
+        sinopsis:
+          type: string
+          maxLength: 200
+          nullable: true
+        id_editorial:
+          type: integer
+          nullable: true
+          description: FK a Editorial (agregada por asociación en relaciones.js)
+        id_idioma:
+          type: integer
+          nullable: true
+          description: FK a Idioma (agregada por asociación en relaciones.js)
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    LibroAutor:
+      type: object
+      description: Fila de la tabla intermedia Libro_Autor (sin timestamps).
+      properties:
+        id_libro:
+          type: integer
+        id_autor:
+          type: integer
+
+    LibroCategoria:
+      type: object
+      description: Fila de la tabla intermedia Libro_Categoria (sin timestamps).
+      properties:
+        id_libro:
+          type: integer
+        id_categoria:
+          type: integer
+
+    Multa:
+      type: object
+      required: [id_prestamo, id_estado_multa, monto, motivo, fecha_generada]
+      properties:
+        id_multa:
+          type: integer
+          readOnly: true
+        id_prestamo:
+          type: integer
+          description: FK a Prestamo
+        id_estado_multa:
+          type: integer
+          description: FK a EstadoMulta
+        monto:
+          type: number
+          format: double
+          description: DECIMAL(10,2) en la base de datos
+        motivo:
+          type: string
+          maxLength: 100
+        fecha_generada:
+          type: string
+          format: date
+        fecha_pago:
+          type: string
+          format: date
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    Notificacion:
+      type: object
+      required: [id_cliente, id_tipo_notificacion, mensaje, fecha_envio]
+      properties:
+        id_notificacion:
+          type: integer
+          readOnly: true
+        id_cliente:
+          type: integer
+          description: FK a Usuario
+        id_tipo_notificacion:
+          type: integer
+          description: FK a TipoNotificacion
+        mensaje:
+          type: string
+          maxLength: 200
+        referencia_id:
+          type: integer
+          nullable: true
+        tipo_referencia:
+          type: string
+          maxLength: 30
+          nullable: true
+        fecha_envio:
+          type: string
+          format: date-time
+        leida:
+          type: boolean
+          default: false
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    Pais:
+      type: object
+      required: [nombre_pais]
+      properties:
+        id_pais:
+          type: integer
+          readOnly: true
+        nombre_pais:
+          type: string
+          maxLength: 30
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    Prestamo:
+      type: object
+      required:
+        - id_ejemplar
+        - id_cliente
+        - id_registrado_por
+        - id_estado_prestamo
+        - fecha_prestamo
+        - fecha_devolucion_esperada
+      properties:
+        id_prestamo:
+          type: integer
+          readOnly: true
+        id_ejemplar:
+          type: integer
+          description: FK a Ejemplar
+        id_cliente:
+          type: integer
+          description: FK a Usuario (alias "cliente")
+        id_registrado_por:
+          type: integer
+          description: FK a Usuario (alias "registradoPor")
+        id_estado_prestamo:
+          type: integer
+          description: FK a EstadoPrestamo
+        fecha_prestamo:
+          type: string
+          format: date
+        fecha_devolucion_esperada:
+          type: string
+          format: date
+        fecha_devolucion_real:
+          type: string
+          format: date
+          nullable: true
+        observaciones:
+          type: string
+          maxLength: 100
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    Reserva:
+      type: object
+      required: [id_libro, id_cliente, id_estado_reserva, fecha_reserva, fecha_expiracion]
+      properties:
+        id_reserva:
+          type: integer
+          readOnly: true
+        id_libro:
+          type: integer
+          description: FK a Libro
+        id_cliente:
+          type: integer
+          description: FK a Usuario
+        id_estado_reserva:
+          type: integer
+          description: FK a EstadoReserva
+        fecha_reserva:
+          type: string
+          format: date
+        fecha_expiracion:
+          type: string
+          format: date
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    Rol:
+      type: object
+      required: [nombre_rol, descripcion_rol]
+      properties:
+        id_rol:
+          type: integer
+          readOnly: true
+        nombre_rol:
+          type: string
+        descripcion_rol:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    TipoDocumento:
+      type: object
+      required: [codigo, nombre]
+      properties:
+        id_tipo_documento:
+          type: integer
+          readOnly: true
+        codigo:
+          type: string
+          maxLength: 5
+        nombre:
+          type: string
+          maxLength: 30
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    TipoNotificacion:
+      type: object
+      required: [nombre]
+      properties:
+        id_tipo_notificacion:
+          type: integer
+          readOnly: true
+        nombre:
+          type: string
+          maxLength: 30
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
+
+    Usuario:
+      type: object
+      required:
+        - numero_documento
+        - nombre
+        - primer_apellido
+        - telefono
+        - email
+        - direccion
+        - fecha_registro
+      properties:
+        id_usuario:
+          type: integer
+          readOnly: true
+        numero_documento:
+          type: string
+          description: Único (unique constraint en el modelo)
+        nombre:
+          type: string
+        segundo_nombre:
+          type: string
+          nullable: true
+        primer_apellido:
+          type: string
+        segundo_apellido:
+          type: string
+          nullable: true
+        telefono:
+          type: string
+        email:
+          type: string
+        direccion:
+          type: string
+        fecha_registro:
+          type: string
+          format: date-time
+        id_rol:
+          type: integer
+          nullable: true
+          description: FK a Rol (agregada por asociación en relaciones.js)
+        id_tipo_documento:
+          type: integer
+          nullable: true
+          description: FK a TipoDocumento (agregada por asociación en relaciones.js)
+        id_estado_cliente:
+          type: integer
+          nullable: true
+          description: FK a EstadoUsuario (agregada por asociación en relaciones.js)
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          readOnly: true
